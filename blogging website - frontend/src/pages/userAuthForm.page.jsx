@@ -1,21 +1,26 @@
-import { useRef } from "react";
-import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { Link, Navigate } from "react-router-dom";
 import AnimationWrapper from "../common/page-animation";
 import InputBox from "../components/input.component";
 import googleIcon from "../imgs/google.png";
 import {toast, Toaster} from 'react-hot-toast';
 import axios from 'axios';
 import { storeInSession } from "../common/session";
+import { UserContext } from "../App";
 
 const UserAuthForm = ({type}) =>{
 
-    
+    let { userAuth: { access_token } , setUserAuth } = 
+    useContext(UserContext);
+
+
+
     const userAuthThroughtServer = (serverRoute, formData) =>{
         
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute , formData)
         .then( ({data}) => {
             storeInSession("user" , JSON.stringify(data));
-            console.log(sessionStorage);
+            setUserAuth(data);
         } )
         .catch(({response}) => {
             toast.error(response.data.error);
@@ -65,10 +70,13 @@ const UserAuthForm = ({type}) =>{
     }
 
     return (
+        access_token ? 
+        <Navigate to="/" />
+        :
         <AnimationWrapper keyValue={type}>
             <section className="h-cover flex items-center justify-center">
             <Toaster />
-            <form id='formElement' className="w-[80%] max-w-[400px]">
+                <form id='formElement' className="w-[80%] max-w-[400px]">
                 <h1 className="text-4xl font-gelasio capitalize text-center mb-24">
                     {type == "sign-in" ? "welcome back" : "join us today"}
                 </h1>
@@ -130,7 +138,7 @@ const UserAuthForm = ({type}) =>{
                         </Link>
                     </p>
                 }
-            </form>
+                </form>
             </section>
         </AnimationWrapper>
         
