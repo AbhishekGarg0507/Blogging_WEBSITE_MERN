@@ -12,6 +12,7 @@ const UserNavigationPanel = () =>{
         removeFromSession("user");
         setUserAuth({access_token:null});
     }
+    
     return(
         <AnimationWrapper 
             transition={{duration:0.2}}
